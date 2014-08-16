@@ -9,7 +9,7 @@ class AdminPages(object):
 
 	# Render Page
 	def render(self, page, **kwargs):
-		menu = {"Settings":"/admin/settings", "Pages":"/admin/pages", "Blog":"/admin/blog", "Options":"/admin/options"}
+		menu = {"Settings":"/admin/settings", "Pages":"/admin/pages", "Blog":"/admin/blog"}
 		
 		keys = {"template":page, "menu":menu, "header": "Admin"}
 
@@ -21,4 +21,11 @@ class AdminPages(object):
 
 	@cherrypy.expose
 	def index(self):
+
+		self.firstLogin()
+
 		return self.render("admin.html")
+
+	@cherrypy.expose
+	def firstLogin(self):
+		
