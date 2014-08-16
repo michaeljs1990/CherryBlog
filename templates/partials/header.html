@@ -1,0 +1,48 @@
+<html>
+	<header>
+		<title>{{header}}</title>
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="/static/css/style.css">
+		<link rel="stylesheet" href="/static/bower/bootstrap/dist/css/bootstrap.min.css">
+		<script type="text/javascript" src="/static/bower/jquery/dist/jquery.min.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Khand' rel='stylesheet' type='text/css'>
+		</header>
+		<body>
+			<div class="container">
+				<!-- Title & Search Bar-->
+				<div class="row">
+					<div class="col-md-12"><h1>{{header}}</h1></div>
+				</div>
+				<!-- Tabs & Menu System -->
+				<div class="row button-row">
+					<nav class="navbar navbar-default" role="navigation">
+						<div class="container-fluid">
+							<!-- Brand and toggle get grouped for better mobile display -->
+							<div class="navbar-header">
+								<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								</button>
+							</div>
+							<!-- Collect the nav links, forms, and other content for toggling -->
+							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+								<ul class="nav navbar-nav">
+									{% for key in menu %}
+										<li><a href="{{menu[key]}}">{{key}}</a></li>
+									{% endfor %}
+								</ul>
+								
+								<ul class="nav navbar-nav navbar-right">
+									<form class="navbar-form navbar-left" role="search">
+										<div class="form-group">
+											<input type="text" class="form-control" placeholder="Search">
+										</div>
+										<button type="submit" class="btn btn-default">Submit</button>
+									</form>
+								</ul>
+								</div><!-- /.navbar-collapse -->
+								</div><!-- /.container-fluid -->
+							</nav>
+						</div>
