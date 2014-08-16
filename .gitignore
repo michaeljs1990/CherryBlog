@@ -1,6 +1,7 @@
 # Custom ignores
 /lib/__pycache__
 /public/bower
+CherryBlog/models/app.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

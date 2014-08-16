@@ -2,7 +2,7 @@ import sqlite3
 
 if __name__ == "__main__":
 
-	db = sqlite3.connect('app.db')
+	db = sqlite3.connect('CherryBlog/models/app.db')
 
 	db.execute('''CREATE TABLE IF NOT EXISTS users
 	       (username	VARCHAR(250)	PRIMARY KEY NOT NULL,

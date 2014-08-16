@@ -1,6 +1,9 @@
 import cherrypy
 from jinja2 import Environment, FileSystemLoader
 
+# Import needed models
+from CherryBlog.models import admin
+
 # Houses all top level pages
 class AdminPages(object):
 
@@ -21,11 +24,13 @@ class AdminPages(object):
 
 	@cherrypy.expose
 	def index(self):
-
-		self.firstLogin()
+		# If no username or password is set on first login
+		# prompt the user to set one for the account.
+		if admin.AdminModel.userExists() == True:
+			return self.firstLogin()
 
 		return self.render("admin.html")
 
 	@cherrypy.expose
 	def firstLogin(self):
-		
+		return self.render("setup.html")
