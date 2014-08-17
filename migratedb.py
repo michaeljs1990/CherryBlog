@@ -6,7 +6,7 @@ if __name__ == "__main__":
 
 	db.execute('''CREATE TABLE IF NOT EXISTS users
 	       (username	VARCHAR(250)	PRIMARY KEY NOT NULL,
-	       password	VARCHAR(60)	NOT NULL);''')
+	       password	VARCHAR(64)	NOT NULL);''')
 
 	db.execute('''CREATE TABLE IF NOT EXISTS pages
 	       (id	INT PRIMARY KEY     NOT NULL,
