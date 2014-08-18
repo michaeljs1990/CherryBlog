@@ -7,8 +7,6 @@ from CherryBlog import main, admin, register
 
 if __name__ == '__main__':
 
-	allowed = {"michael" : "bond007"}
-
 	front = {
 		'/': {
 			'tools.sessions.on': True,
