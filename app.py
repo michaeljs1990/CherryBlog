@@ -3,11 +3,13 @@ import cherrypy
 from jinja2 import Environment, FileSystemLoader
 
 # Package level imports
-from CherryBlog import main, admin
+from CherryBlog import main, admin, register
 
 if __name__ == '__main__':
 
-	conf = {
+	allowed = {"michael" : "bond007"}
+
+	front = {
 		'/': {
 			'tools.sessions.on': True,
 			'tools.staticdir.root': os.path.abspath(os.getcwd())
@@ -18,8 +20,23 @@ if __name__ == '__main__':
 		}
 	}
 
+	secure = {
+		'/': {
+			'tools.sessions.on': True,
+			'tools.staticdir.root': os.path.abspath(os.getcwd()),
+			'tools.auth_basic.on': True,
+			'tools.auth_basic.realm': 'CherryBlog',
+			'tools.auth_basic.checkpassword': admin.AdminPages.login
+		},
+		'/static': {
+			'tools.staticdir.on': True,
+			'tools.staticdir.dir': './public'
+		}
+	}
+
 	# Setup template engine and start server
 	env = Environment(loader=FileSystemLoader('templates'))
 
-	cherrypy.tree.mount(admin.AdminPages(env), '/admin', conf)
-	cherrypy.quickstart(main.MainPages(env), '/', conf)
+	cherrypy.tree.mount(admin.AdminPages(env), '/admin', secure)
+	cherrypy.tree.mount(register.RegisterPages(env), '/setup', front)
+	cherrypy.quickstart(main.MainPages(env), '/', front)

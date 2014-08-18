@@ -30,13 +30,20 @@ class AdminModel(object):
 		# Secure Hashing for the password
 		passwd = AdminModel.computeHash(password)
 
-		cursor = db.execute('''INSERT INTO users(username, password) VALUES (?, ?)''', (uname, passwd))
+		cursor = db.execute('''INSERT INTO users(username, password) VALUES (?, ?);''', (uname, passwd))
 		
 		try:
 			db.commit()
 			return True
 		except Exception as err:
 			return False
+
+	@staticmethod
+	def getUser(username):
+		db = AdminModel.connector()
+		cursor = db.execute('''SELECT * FROM users WHERE username=?;''', (username.encode('utf-8'),))
+		return cursor
+
 
 	@staticmethod
 	def computeHash(password, salt="magicpy"):
