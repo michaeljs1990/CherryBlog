@@ -27,7 +27,7 @@ class RegisterPages(object):
 	def index(self):
 		# If no username or password is set on first login
 		# prompt the user to set one for the account.
-		if admin.AdminModel.userExists() == False:
+		if admin.AdminModel().userExists() == False:
 			return self.render("setup.html")
 
 		raise cherrypy.HTTPRedirect("/admin")
@@ -40,7 +40,7 @@ class RegisterPages(object):
 
 		# Block creation of any extra users beyond the
 		# first one via this route.
-		if admin.AdminModel.userExists() == True:
+		if admin.AdminModel().userExists() == True:
 			raise cherrypy.HTTPRedirect("/admin")
 
 		validation = Schema({
@@ -52,7 +52,7 @@ class RegisterPages(object):
 			validation(form_data)
 			if (" " in form_data["username"]) == True:
 				raise Invalid("Username must not contain any spaces.")
-			if not admin.AdminModel.addUser(form_data["username"], form_data["password"]):
+			if not admin.AdminModel().addUser(form_data["username"], form_data["password"]):
 				raise Invalid("Unable to add the user to the database.")
 		except Exception as err:
 			return self.render("setup.html", error=str(err))

@@ -4,16 +4,13 @@ import binascii
 
 class AdminModel(object):
 
-	@classmethod
-	def connector(cls):
-		return sqlite3.connect('CherryBlog/models/app.db')
+	def __init__(self):
+		self._db = sqlite3.connect('CherryBlog/models/app.db')
 
 	# Check for the existence of a user in the database
 	# return @bool
-	@staticmethod
-	def userExists():
-		db = AdminModel.connector()
-		cursor = db.execute('''SELECT COUNT(*) FROM users;''')
+	def userExists(self):
+		cursor = self._db.execute('''SELECT COUNT(*) FROM users;''')
 		
 		if cursor.fetchone()[0] == 0:
 			return False;
@@ -21,30 +18,22 @@ class AdminModel(object):
 			return True
 
 	# Add new user to the database
-	@staticmethod
-	def addUser(username, password):
-		db = AdminModel.connector()
-
-		uname = username.encode('utf-8')
-
+	def addUser(self, username, password):
 		# Secure Hashing for the password
 		passwd = AdminModel.computeHash(password)
 
-		cursor = db.execute("INSERT INTO users(username, password) VALUES (?, ?);", (uname, passwd))
+		cursor = self._db.execute("INSERT INTO users(username, password) VALUES (?, ?);", (username, passwd))
 		
 		try:
-			db.commit()
+			self._db.commit()
 			return True
 		except Exception as err:
 			return False
 
 	# Return an array of username and hashed password
-	@staticmethod
-	def getUser(username):
-		db = AdminModel.connector()
-		cursor = db.execute("SELECT * FROM users WHERE username=?;", (username.encode('utf-8'),))
+	def getUser(self, username):
+		cursor = self._db.execute("SELECT * FROM users WHERE username=?;", (username,))
 		return cursor
-
 
 	@staticmethod
 	def computeHash(password, salt="magicpy"):
@@ -54,11 +43,16 @@ class AdminModel(object):
 	# Return the value of a given key as listed
 	# inside of the database.
 	# Returns False on failed key lookup
-	@staticmethod
-	def getKey(key):
-		db = AdminModel.connector()
-		print("repr")
-		print(repr(key))
-		cursor = db.execute("SELECT * FROM options WHERE key=?;", (key.encode('utf-8'),))
+	def getKey(self, key):
+		cursor = self._db.execute("SELECT * FROM options WHERE key=?;", (key,))
 
 		return cursor.fetchone()[1]
+
+	def updateKey(self, key, value):
+		cursor = self._db.execute("UPDATE options SET value=? WHERE key=?;", (value, key))
+
+		try:
+			self._db.commit()
+			return True
+		except Exception as err:
+			return err

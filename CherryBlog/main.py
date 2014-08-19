@@ -1,6 +1,8 @@
 import cherrypy
 from jinja2 import Environment, FileSystemLoader
 
+from CherryBlog.models import admin
+
 # Houses all top level pages
 class MainPages(object):
 
@@ -11,7 +13,10 @@ class MainPages(object):
 	def render(self, page, **kwargs):
 		menu = {"Home":"/", "Blog":"/blog", "GitHub":"/github", "Projects":"/projects", "About":"/about"}
 
-		keys = {"template":page, "menu":menu, "header": "Michael Schuett"}
+		# Get site header from the database
+		header = admin.AdminModel().getKey('site_title')
+
+		keys = {"template":page, "menu":menu, "header":header}
 
 		for key in kwargs:
 			keys[key] = kwargs[key]

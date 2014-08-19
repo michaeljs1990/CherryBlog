@@ -32,7 +32,7 @@ class AdminPages(object):
 	# in for the first time.
 	@staticmethod
 	def login(realm, username, password):
-		row = admin.AdminModel.getUser(username)
+		row = admin.AdminModel().getUser(username)
 
 		try:
 			verify = row.fetchone()[1]
@@ -46,9 +46,28 @@ class AdminPages(object):
 	@cherrypy.expose
 	def settings(self):
 		# Get the site title
-		title = admin.AdminModel.getKey("site_title")
+		title = admin.AdminModel().getKey("site_title")
 
-		return self.render("settings.html", title=title)
+		return self.render("settings.html", site_title=title)
+
+	# Update all Key Value pairs in the database.
+	@cherrypy.expose
+	def settingsPost(self, **kwargs):
+		form_data = cherrypy.request.body.params;
+
+		validation = Schema({
+			Required('site_title'): All(str, Length(max=1000))
+		})
+
+		try:
+			validation(form_data)
+			if not admin.AdminModel().updateKey("site_title", form_data["site_title"]):
+				raise Invalid("Unable to add the user to the database.")
+		except Exception as err:
+			return self.render("settings.html", error=str(err))
+
+		# Key was changed successfully
+		raise cherrypy.HTTPRedirect("/admin/settings")
 
 	@cherrypy.expose
 	def pages(self):
