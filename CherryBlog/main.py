@@ -11,7 +11,7 @@ class MainPages(object):
 
 	# Render Page
 	def render(self, page, **kwargs):
-		menu = {"Home":"/", "Blog":"/blog", "GitHub":"/github", "Projects":"/projects", "About":"/about"}
+		menu = {"Home":"/"}
 
 		# Get site header from the database
 		header = admin.AdminModel().getKey('site_title')
