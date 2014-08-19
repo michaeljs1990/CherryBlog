@@ -30,7 +30,7 @@ class AdminModel(object):
 		# Secure Hashing for the password
 		passwd = AdminModel.computeHash(password)
 
-		cursor = db.execute('''INSERT INTO users(username, password) VALUES (?, ?);''', (uname, passwd))
+		cursor = db.execute("INSERT INTO users(username, password) VALUES (?, ?);", (uname, passwd))
 		
 		try:
 			db.commit()
@@ -38,10 +38,11 @@ class AdminModel(object):
 		except Exception as err:
 			return False
 
+	# Return an array of username and hashed password
 	@staticmethod
 	def getUser(username):
 		db = AdminModel.connector()
-		cursor = db.execute('''SELECT * FROM users WHERE username=?;''', (username.encode('utf-8'),))
+		cursor = db.execute("SELECT * FROM users WHERE username=?;", (username.encode('utf-8'),))
 		return cursor
 
 
@@ -49,3 +50,15 @@ class AdminModel(object):
 	def computeHash(password, salt="magicpy"):
 		dk = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
 		return binascii.hexlify(dk)
+
+	# Return the value of a given key as listed
+	# inside of the database.
+	# Returns False on failed key lookup
+	@staticmethod
+	def getKey(key):
+		db = AdminModel.connector()
+		print("repr")
+		print(repr(key))
+		cursor = db.execute("SELECT * FROM options WHERE key=?;", (key.encode('utf-8'),))
+
+		return cursor.fetchone()[1]

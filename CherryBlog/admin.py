@@ -41,9 +41,14 @@ class AdminPages(object):
 		except Exception as err:
 			return False
 
+	# Allow user to set random blog settings and turn flags on
+	# and off such as site title and pages.
 	@cherrypy.expose
 	def settings(self):
-		pass
+		# Get the site title
+		title = admin.AdminModel.getKey("site_title")
+
+		return self.render("settings.html", title=title)
 
 	@cherrypy.expose
 	def pages(self):
