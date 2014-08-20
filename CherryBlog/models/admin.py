@@ -56,3 +56,13 @@ class AdminModel(object):
 			return True
 		except Exception as err:
 			return err
+
+	# Add new blog post to the databse.
+	def newBlog(self, post, slug, tags, released, content):
+		cursor = self._db.execute("INSERT INTO blog(post, slug, tags, released, content) VALUES(?, ?, ?, ?, ?)", (post, slug, tags, released, content))
+		
+		try:
+			self._db.commit()
+			return True
+		except Exception as err:
+			return err

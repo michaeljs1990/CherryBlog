@@ -26,7 +26,7 @@ class AdminPages(object):
 
 	@cherrypy.expose
 	def index(self):
-		return self.render("admin.html")
+		return self.render("admin/admin.html")
 
 	# Only called by the cherrypy framework when logging
 	# in for the first time.
@@ -48,7 +48,7 @@ class AdminPages(object):
 		# Get the site title
 		title = admin.AdminModel().getKey("site_title")
 
-		return self.render("settings.html", site_title=title)
+		return self.render("admin/settings.html", site_title=title)
 
 	# Update all Key Value pairs in the database.
 	@cherrypy.expose
@@ -64,15 +64,48 @@ class AdminPages(object):
 			if not admin.AdminModel().updateKey("site_title", form_data["site_title"]):
 				raise Invalid("Unable to add the user to the database.")
 		except Exception as err:
-			return self.render("settings.html", error=str(err))
+			return self.render("admin/settings.html", error=str(err))
 
 		# Key was changed successfully
 		raise cherrypy.HTTPRedirect("/admin/settings")
 
 	@cherrypy.expose
 	def pages(self):
-		pass
+		return self.render("admin/pages.html")
 
+	# All Blog handling functions below
+	# Blog returns all blog posts and displays
+	# button for the user to create a new one.
 	@cherrypy.expose
 	def blog(self):
-		pass
+		return self.render("admin/blog.html")
+
+	# Display the new blog page. Nothing else is
+	# needed to be handled on this page.
+	@cherrypy.expose
+	def newblog(self):
+		tmpl = self._env.get_template("admin/newblog.html")
+		return tmpl.render()
+
+	# Add a new blog post into the database.
+	# Nothing is returned from this method.
+	@cherrypy.expose
+	@cherrypy.tools.json_in() 
+	def blogPost(self, **kwargs):
+		json = cherrypy.request.json
+
+		validation = Schema({
+			Required('post'): All(str, Length(max=250)),
+			Required('content'): str,
+			Required('released'): str,
+			'tags': All(str, Length(max=2000)),
+		})
+
+		slug = json['post'].replace (" ", "-")
+
+		try:
+			validation(json)
+			if not admin.AdminModel().newBlog(json['post'], slug, json['tags'], json['released'], json['content']):
+				raise cherrypy.HTTPError(406)
+		except Exception as err:
+			raise cherrypy.HTTPError(400)

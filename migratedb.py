@@ -9,16 +9,14 @@ if __name__ == "__main__":
 	       password	VARCHAR(64)	NOT NULL);''')
 
 	db.execute('''CREATE TABLE IF NOT EXISTS pages
-	       (id	INT PRIMARY KEY     NOT NULL,
-	       page	VARCHAR(250)	NOT NULL,
+	       (page	VARCHAR(250)	PRIMARY KEY	NOT NULL,
 	       slug	VARCHAR(250)	NOT NULL,
 	       parent VARCHAR(250) NOT NULL,
 	       released BOOLEAN NOT NULL,
 	       content TEXT);''')
 
 	db.execute('''CREATE TABLE IF NOT EXISTS blog
-	       (id	INT PRIMARY KEY     NOT NULL,
-	       post	VARCHAR(250)	NOT NULL,
+	       (post	VARCHAR(250)	PRIMARY KEY	NOT NULL,
 	       slug	VARCHAR(250)	NOT NULL,
 	       tags TEXT,
 	       released BOOLEAN NOT NULL,
