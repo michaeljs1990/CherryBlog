@@ -2,7 +2,13 @@
 <html>
     <head>
         <!-- MISC/META -->
-        <title>New Post</title>
+        <title>
+            {% if data is defined %}
+                Update Post
+            {% else %}
+                New Post
+            {% endif %}
+        </title>
         <meta charset="utf-8">
         <meta name="description" content="Zenpen - A minimal web based text editor, for the modern man.">
         
@@ -15,6 +21,10 @@
             <script src="/static/bower/zenpen/js/libs/FileSaver.min.js"></script>
             <script src="/static/bower/zenpen/js/libs/Blob.js"></script>
             <script src="/static/bower/zenpen/js/libs/fullScreen.js"></script>
+            <script>
+                // Remove stupid local storage from Zenpen.
+                localStorage.clear();
+            </script>
             
             <!-- JS loading in footer -->
         </head>
@@ -31,8 +41,12 @@
                     <h1>Ready to publish?</h1>
                     <br /><br />
                     <p class='saveselection'>
-                        <a id="publish">Publish</a> | 
-                        <a id="draft">Draft</a>
+                        {% if data is defined %}
+                            <a id="update" onclick="blog.update({{data[0]}});">Update</a>
+                        {% else %}
+                            <a id="publish">Publish</a> | 
+                            <a id="draft">Draft</a>
+                        {% endif %}
                     </p>
                     <button class='savebutton useicons' style="display:none;">&#xe006;</button>
                     <textarea class='hiddentextbox'></textarea>
@@ -80,13 +94,25 @@
             </div>
             <section>
                 <header contenteditable="true" class="header" id="post">
-                    Title
+                    {% if data is defined %}
+                        {{ data[1] }}
+                    {% else %}
+                        Title
+                    {% endif %}
                 </header>
                 <header contenteditable="true" class="header" style="font-size:20px" id="tags">
-                    <p>Post Tags, Seperate, With, Commas</p>
+                    {% if data is defined %}
+                        {{ data[3] }}
+                    {% else %}
+                        <p>Post Tags, Seperate, With, Commas</p>
+                    {% endif %}
                 </header>
                 <article contenteditable="true" class="content" id="content">
-                    <p>The start of an amazing blog . . .</p>
+                    {% if data is defined %}
+                        {{ data[5] }}
+                    {% else %}
+                        <p>The start of an amazing blog . . .</p>
+                    {% endif %}
                 </article>
             </section>
             
@@ -99,10 +125,12 @@
             "/static/bower/zenpen/js/editor.js",
             "/static/js/blog.js",
             function(){
-            // Add onlick events
-            document.getElementById("publish").onclick = blog.publish;
-            document.getElementById("draft").onclick = blog.draft;
-            
+            try {
+                // Add onlick events
+                document.getElementById("publish").onclick = blog.publish;
+                document.getElementById("draft").onclick = blog.draft;
+            } catch (err) { /* We don't care about this case*/ }
+
             // Initiate ZenPen
             editor.init();
             ui.init();

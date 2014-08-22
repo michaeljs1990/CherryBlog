@@ -18,6 +18,7 @@ var blog = {
 		})
 	},
 	
+	// Publish a new blog for view on the front end
 	publish: function() {
 		var request = new XMLHttpRequest();
 		request.open('POST', '/admin/blogPost', true);
@@ -26,8 +27,13 @@ var blog = {
 		request.send(data);
 	},
 
-	draft: function() {
-
+	// Update an already published blog
+	update: function(id) {
+		var request = new XMLHttpRequest();
+		request.open('PUT', '/admin/blogPut/' + id, true);
+		request.setRequestHeader('Content-Type', 'application/json');
+		data = blog.pull("published")
+		request.send(data);
 	}
 
 }

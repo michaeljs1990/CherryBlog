@@ -7,3 +7,23 @@
 		<button type="button" class="btn btn-info" style="width:100%; margin-top:14px;">New Blog</button>
 	</a>
 </div>
+
+<br /><br />
+<br /><br />
+
+<table class="table table-striped">
+	<thead>
+		<td>Title</td>
+		<td>Tags</td>
+		<td>Status</td>
+	</thead>
+	<tbody>
+		{% for post in posts %}
+			<tr>
+			<td><a href="newblog/{{post[4]}}">{{ post[0] }}</a></td>
+			<td>{{ post[2] }}</td>
+			<td>{{ post[3] }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

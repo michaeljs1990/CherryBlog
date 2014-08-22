@@ -4,7 +4,7 @@ from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid, In
 from jinja2 import Environment, FileSystemLoader
 
 # Import needed models
-from CherryBlog.models import admin
+from CherryBlog.models import admin, blog
 
 # Houses all top level pages
 class AdminPages(object):
@@ -78,19 +78,32 @@ class AdminPages(object):
 	# button for the user to create a new one.
 	@cherrypy.expose
 	def blog(self):
-		return self.render("admin/blog.html")
+		# post, tags, and released returned form the db
+		posts = blog.BlogModel().getAll().fetchall();
+
+		return self.render("admin/blog.html", posts=posts)
 
 	# Display the new blog page. Nothing else is
 	# needed to be handled on this page.
+	# This also handles cases where a blog
+	# is being edited when slug is passed in.
 	@cherrypy.expose
-	def newblog(self):
+	def newblog(self, bid=None):
+		# If id is set we need to load in some data
+		if bid != None:
+			data = blog.BlogModel().editBlog(bid)
+
 		tmpl = self._env.get_template("admin/newblog.html")
-		return tmpl.render()
+
+		if bid is None:
+			return tmpl.render()
+		else:
+			return tmpl.render(data=data)
 
 	# Add a new blog post into the database.
 	# Nothing is returned from this method.
 	@cherrypy.expose
-	@cherrypy.tools.json_in() 
+	@cherrypy.tools.json_in()
 	def blogPost(self, **kwargs):
 		json = cherrypy.request.json
 
@@ -101,11 +114,34 @@ class AdminPages(object):
 			'tags': All(str, Length(max=2000)),
 		})
 
-		slug = json['post'].replace (" ", "-")
+		slug = json['post'].strip().replace (" ", "-")
 
 		try:
 			validation(json)
-			if not admin.AdminModel().newBlog(json['post'], slug, json['tags'], json['released'], json['content']):
+			if not blog.BlogModel().newBlog(json['post'].strip(), slug, json['tags'].strip(), json['released'].strip(), json['content'].strip()):
+				raise cherrypy.HTTPError(406)
+		except Exception as err:
+			raise cherrypy.HTTPError(400)
+
+	# Add a new blog post into the database.
+	# Nothing is returned from this method.
+	@cherrypy.expose
+	@cherrypy.tools.json_in()
+	def blogPut(self, bid, **kwargs):
+		json = cherrypy.request.json
+
+		validation = Schema({
+			Required('post'): All(str, Length(max=250)),
+			Required('content'): str,
+			Required('released'): str,
+			'tags': All(str, Length(max=2000)),
+		})
+
+		slug = json['post'].strip().replace (" ", "-")
+
+		try:
+			validation(json)
+			if not blog.BlogModel().updateBlog(json['post'].strip(), slug, json['tags'].strip(), json['released'].strip(), json['content'].strip(), bid):
 				raise cherrypy.HTTPError(406)
 		except Exception as err:
 			raise cherrypy.HTTPError(400)
