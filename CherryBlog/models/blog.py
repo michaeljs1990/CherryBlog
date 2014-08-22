@@ -29,6 +29,7 @@ class BlogModel(object):
 
 		return cursor.fetchone()
 
+	# Render list of posts without content
 	def getAll(self):
 		cursor = self._db.execute("SELECT post, slug, tags, released, id FROM blog;")
 

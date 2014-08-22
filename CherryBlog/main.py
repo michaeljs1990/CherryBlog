@@ -1,7 +1,7 @@
 import cherrypy
 from jinja2 import Environment, FileSystemLoader
 
-from CherryBlog.models import admin
+from CherryBlog.models import admin, blog
 
 # Houses all top level pages
 class MainPages(object):
@@ -11,7 +11,7 @@ class MainPages(object):
 
 	# Render Page
 	def render(self, page, **kwargs):
-		menu = {"Home":"/"}
+		menu = {"Home":"/", "Blog":"/blog"}
 
 		# Get site header from the database
 		header = admin.AdminModel().getKey('site_title')
@@ -26,4 +26,18 @@ class MainPages(object):
 
 	@cherrypy.expose
 	def index(self):
-		return self.render("index.html")
+		return self.render("main/index.html")
+
+	# Return a list of all the blog
+	# posts that are in a published state
+	@cherrypy.expose
+	def blog(self):
+		posts = blog.BlogModel().getAll()
+
+		return self.render("main/blog.html", posts=posts)
+
+	@cherrypy.expose
+	def post(self, bid):
+		post = blog.BlogModel().editBlog(bid)
+
+		return self.render("main/post.html", data=post)
