@@ -42,10 +42,12 @@
                     <br /><br />
                     <p class='saveselection'>
                         {% if data is defined %}
-                            <a id="update" onclick="blog.update({{data[0]}});">Update</a>
+                            <a id="update" onclick="blog.update({{data[0]}});">Update</a> |
+                            <a id="update" onclick="blog.exit();">Back</a>
                         {% else %}
                             <a id="publish">Publish</a> | 
-                            <a id="draft">Draft</a>
+                            <a id="draft">Draft</a> | 
+                            <a id="update" onclick="blog.exit();">Back</a>
                         {% endif %}
                     </p>
                     <button class='savebutton useicons' style="display:none;">&#xe006;</button>
