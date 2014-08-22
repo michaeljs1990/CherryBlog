@@ -21,7 +21,7 @@ class MainPages(object):
 		for key in kwargs:
 			keys[key] = kwargs[key]
 
-		tmpl = self._env.get_template('partials/body.html')
+		tmpl = self._env.get_template('partials/front.html')
 		return tmpl.render(keys)
 
 	@cherrypy.expose
