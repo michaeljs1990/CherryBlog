@@ -32,7 +32,9 @@ if __name__ == "__main__":
 	       (name	VARCHAR(250)	PRIMARY KEY 	NOT NULL,
 	       image	TEXT NOT NULL);''')
 
-	db.execute('''INSERT INTO options(key, value) VALUES ("site_title", "CherryBlog") ''')
+	# Insert default key value pairs
+	db.execute('''INSERT INTO options(key, value) VALUES ("site_title", "CherryBlog");''')
+	db.execute('''INSERT INTO options(key, value) VALUES ("about_picture", "cherrypy.png");''')
 
 	db.commit()
 	print("CherryBlog DB created successfully");

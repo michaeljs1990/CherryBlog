@@ -31,6 +31,6 @@ class BlogModel(object):
 
 	# Render list of posts without content
 	def getAll(self):
-		cursor = self._db.execute("SELECT post, slug, tags, released, id FROM blog;")
+		cursor = self._db.execute("SELECT post, slug, tags, released, id FROM blog ORDER BY id  DESC;")
 
 		return cursor

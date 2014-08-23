@@ -1,4 +1,6 @@
 import cherrypy
+import cgi, os
+import cgitb;
 
 from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid, Invalid
 from jinja2 import Environment, FileSystemLoader
@@ -47,8 +49,30 @@ class AdminPages(object):
 	def settings(self):
 		# Get the site title
 		title = admin.AdminModel().getKey("site_title")
+		picture = admin.AdminModel().getKey("about_picture")
 
-		return self.render("admin/settings.html", site_title=title)
+		return self.render("admin/settings.html", site_title=title, about_picture=picture)
+
+	# Upload a picture to /public/uploads
+	@cherrypy.expose
+	def upload(self, **kwargs):
+		form_data = cherrypy.request.body.params;
+
+		# Upload file to folder.
+		try:
+			cgitb.enable()
+			form = cgi.FieldStorage()
+			form = form_data['upload']
+			print(form)
+			if form.filename:
+				# strip leading path from file name to avoid directory traversal attacks
+				fn = os.path.basename(form.filename)
+				open('public/uploads/' + fn, 'wb').write(form.file.read())
+		except Exception as err:
+			print(err)
+
+		# Key was changed successfully
+		raise cherrypy.HTTPRedirect("/admin/settings")
 
 	# Update all Key Value pairs in the database.
 	@cherrypy.expose
@@ -63,6 +87,7 @@ class AdminPages(object):
 			validation(form_data)
 			if not admin.AdminModel().updateKey("site_title", form_data["site_title"]):
 				raise Invalid("Unable to add the user to the database.")
+
 		except Exception as err:
 			return self.render("admin/settings.html", error=str(err))
 
