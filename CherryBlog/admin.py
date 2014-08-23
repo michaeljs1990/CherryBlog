@@ -1,6 +1,7 @@
 import cherrypy
 import cgi, os
-import cgitb;
+import cgitb
+import glob
 
 from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid, Invalid
 from jinja2 import Environment, FileSystemLoader
@@ -51,7 +52,17 @@ class AdminPages(object):
 		title = admin.AdminModel().getKey("site_title")
 		picture = admin.AdminModel().getKey("about_picture")
 
-		return self.render("admin/settings.html", site_title=title, about_picture=picture)
+		# Get all pictures in upload dir...
+		# Might want to find a better way to do this later
+
+		uploads = list()
+		os.chdir("public/uploads")
+		for file in glob.glob("*.*"):
+			uploads.append(file)
+
+		os.chdir("../..")
+
+		return self.render("admin/settings.html", site_title=title, about_picture=picture, pictures=uploads)
 
 	# Upload a picture to /public/uploads
 	@cherrypy.expose
