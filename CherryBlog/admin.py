@@ -51,6 +51,7 @@ class AdminPages(object):
 		# Get the site title
 		title = admin.AdminModel().getKey("site_title")
 		picture = admin.AdminModel().getKey("about_picture")
+		text = admin.AdminModel().getKey("about_text")
 
 		# Get all pictures in upload dir...
 		# Might want to find a better way to do this later
@@ -60,9 +61,11 @@ class AdminPages(object):
 		for file in glob.glob("*.*"):
 			uploads.append(file)
 
+		# Make sure to change back to the
+		# proper file location or get ready to 500.
 		os.chdir("../..")
 
-		return self.render("admin/settings.html", site_title=title, about_picture=picture, pictures=uploads)
+		return self.render("admin/settings.html", site_title=title, about_picture=picture, pictures=uploads, about_text=text)
 
 	# Upload a picture to /public/uploads
 	@cherrypy.expose
@@ -91,14 +94,19 @@ class AdminPages(object):
 		form_data = cherrypy.request.body.params;
 
 		validation = Schema({
-			Required('site_title'): All(str, Length(max=1000))
+			Required('site_title'): All(str, Length(max=1000)),
+			Required('about_picture'): All(str, Length(max=1000)),
+			Required('about_text'): All(str, Length(max=5000))
 		})
 
 		try:
 			validation(form_data)
 			if not admin.AdminModel().updateKey("site_title", form_data["site_title"]):
 				raise Invalid("Unable to add the user to the database.")
-
+			if not admin.AdminModel().updateKey("about_picture", form_data["about_picture"]):
+				raise Invalid("Unable to update the picture in the database.")
+			if not admin.AdminModel().updateKey("about_text", form_data["about_text"]):
+				raise Invalid("Unable to update the about text in the database.")
 		except Exception as err:
 			return self.render("admin/settings.html", error=str(err))
 

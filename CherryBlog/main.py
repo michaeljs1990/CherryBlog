@@ -15,8 +15,10 @@ class MainPages(object):
 
 		# Get site header from the database
 		header = admin.AdminModel().getKey('site_title')
+		pic = admin.AdminModel().getKey('about_picture')
+		text = admin.AdminModel().getKey('about_text')
 
-		keys = {"template":page, "menu":menu, "header":header}
+		keys = {"template":page, "menu":menu, "header":header, "about_picture":pic, "about_text":text}
 
 		for key in kwargs:
 			keys[key] = kwargs[key]
